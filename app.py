@@ -18,7 +18,7 @@ st.set_page_config(
 # Google Drive File ID for the Model
 MODEL_FILE_ID = "1Jw5GnCgf_x0xOYKimSDv_wwLuFs5R8i_"
 MODEL_PATH = "best_model.keras"
-TOKENIZER_PATH = "tokenizer.pkl"
+TOKENIZER_PATH = "tokenizer (1).pkl"
 
 
 @st.cache_resource

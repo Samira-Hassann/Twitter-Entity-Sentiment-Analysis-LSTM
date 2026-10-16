@@ -32,7 +32,7 @@ def load_assets():
       gdown.download(url, MODEL_PATH, quiet=False)
 
   # Load Complete Model directly
-  model = load_model(MODEL_PATH)
+  model = load_model(MODEL_PATH, compile=False)
 
   # Load Tokenizer from local repo
   with open(TOKENIZER_PATH, "rb") as handle:

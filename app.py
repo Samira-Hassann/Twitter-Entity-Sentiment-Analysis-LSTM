@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
-from tensorflow.keras.models import load_model
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 import re
@@ -15,7 +16,7 @@ st.set_page_config(
     page_title="Twitter Sentiment Analysis", page_icon="🐦", layout="centered"
 )
 
-# Google Drive File ID for the Model
+# Google Drive File ID for the Model weights
 MODEL_FILE_ID = "1Jw5GnCgf_x0xOYKimSDv_wwLuFs5R8i_"
 MODEL_PATH = "best_model.keras"
 TOKENIZER_PATH = "tokenizer.pkl"
@@ -23,25 +24,43 @@ TOKENIZER_PATH = "tokenizer.pkl"
 
 @st.cache_resource
 def load_assets():
-  # Download model from Google Drive if not exists locally
+  # Download model weights from Google Drive if not exists locally
   if not os.path.exists(MODEL_PATH):
     url = f"https://drive.google.com/uc?id={MODEL_FILE_ID}"
     with st.spinner(
-        "Downloading model from Google Drive... Please wait a moment ⏳"
+        "Downloading model weights from Google Drive... Please wait ⏳"
     ):
       gdown.download(url, MODEL_PATH, quiet=False)
 
-  # Load Model
-  model = load_model(MODEL_PATH)
+  # Build the exact model architecture matching your notebook
+  vocab_size = 30000 
+  embedding_dim = 300
 
-  # Load Tokenizer from local repo repository
+  model = Sequential([
+      Embedding(
+          input_dim=vocab_size,
+          output_dim=embedding_dim,
+          input_length=300,
+          trainable=True,
+      ),
+      Bidirectional(LSTM(128)),
+      Dense(64, activation="relu"),
+      Dropout(0.2),
+      Dense(4, activation="softmax"),
+  ])
+
+  # Load weights safely
+  model.load_weights(MODEL_PATH)
+
+  # Load Tokenizer from local repo
   with open(TOKENIZER_PATH, "rb") as handle:
     tokenizer = pickle.load(handle)
 
   return model, tokenizer
 
 
-model, tokenizer = load_assets()
+with st.spinner("Loading model and tokenizer... Please wait 🚀"):
+  model, tokenizer = load_assets()
 
 MAX_LEN = 300
 

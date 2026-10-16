@@ -1,0 +1,10 @@
+streamlit
+tensorflow
+keras
+numpy
+pandas
+scikit-learn
+beautifulsoup4
+emoji
+gensim
+nltk

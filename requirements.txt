@@ -1,8 +1,7 @@
 streamlit==1.32.0
+tensorflow-cpu==2.15.0
 numpy<2.0.0
 pandas
-scikit-learn
 beautifulsoup4
 emoji
 gdown
-tensorflow-cpu==2.15.0

@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Embedding, Bidirectional, LSTM, Dense, Dropout
+from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 import re
@@ -16,7 +15,7 @@ st.set_page_config(
     page_title="Twitter Sentiment Analysis", page_icon="🐦", layout="centered"
 )
 
-# Google Drive File ID for the Model weights
+# Google Drive File ID for the Model
 MODEL_FILE_ID = "1Jw5GnCgf_x0xOYKimSDv_wwLuFs5R8i_"
 MODEL_PATH = "best_model.keras"
 TOKENIZER_PATH = "tokenizer.pkl"
@@ -24,33 +23,16 @@ TOKENIZER_PATH = "tokenizer.pkl"
 
 @st.cache_resource
 def load_assets():
-  # Download model weights from Google Drive if not exists locally
+  # Download model from Google Drive if not exists locally
   if not os.path.exists(MODEL_PATH):
     url = f"https://drive.google.com/uc?id={MODEL_FILE_ID}"
     with st.spinner(
-        "Downloading model weights from Google Drive... Please wait ⏳"
+        "Downloading model from Google Drive... Please wait a moment ⏳"
     ):
       gdown.download(url, MODEL_PATH, quiet=False)
 
-  # Build the exact model architecture matching your notebook
-  vocab_size = 30000 
-  embedding_dim = 300
-
-  model = Sequential([
-      Embedding(
-          input_dim=vocab_size,
-          output_dim=embedding_dim,
-          input_length=300,
-          trainable=True,
-      ),
-      Bidirectional(LSTM(128)),
-      Dense(64, activation="relu"),
-      Dropout(0.2),
-      Dense(4, activation="softmax"),
-  ])
-
-  # Load weights safely
-  model.load_weights(MODEL_PATH)
+  # Load Complete Model directly
+  model = load_model(MODEL_PATH)
 
   # Load Tokenizer from local repo
   with open(TOKENIZER_PATH, "rb") as handle:
